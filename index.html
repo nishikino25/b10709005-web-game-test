@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="/socket.io/socket.io.js"></script>
+<script src="resources/jquery.min.js"></script>
+<script src="resources/qrcode.min.js"></script>
+<script src="resources/three.min.js"></script>
+<link rel="stylesheet" type="text/css" href="public/index.css">
+
+<head>
+    <title>Smartphone Controller Game</title>
+</head>
+
+<body>
+    <script>
+        var io = io.connect();
+        var speed = 0,
+            controller_state = {};
+        var game_connected = function() {
+            var host;
+            host = window.location.href;
+            split_list = host.split(":");
+            if (split_list[1] == "//localhost") {
+                io.emit('load_ip');
+                io.on('host_id', function(data) {
+                    host = data;
+                    var url = "http://" + host + ":8000?id=" + io.id;
+                    var qr_code = new QRCode("qr");
+                    qr_code.makeCode(url);
+                    io.removeListener('game_connected', game_connected);
+                });
+            } else {
+                var url = host + "?id=" + io.id;
+                var qr_code = new QRCode("qr");
+                qr_code.makeCode(url);
+                io.removeListener('game_connected', game_connected);
+            }
+        };
+        if (window.location.href.indexOf('?id=') > 0) {
+            io.emit('controller_connect', window.location.href.split('?id=')[1]);
+        } else {
+            io.emit('game_connect');
+            var qr = document.createElement('div');
+            qr.id = "qr";
+            document.body.appendChild(qr)
+            io.on('controller_connected', function(connected) {
+                if (connected) {
+                    qr.style.display = "none";
+                } else {
+                    qr.style.display = "block";
+                    controller_state = {};
+                }
+            });
+        }
+        io.on('controller_connected', function(connected) {
+            if (connected) {
+                alert("Connected!");
+            } else {
+                alert("Not connected!");
+            }
+            var controller_state = {
+                    accelerate: false,
+                    steer: 0
+                },
+                emit_updates = function() {
+                    io.emit('controller_state_change', controller_state);
+                }
+            touchstart = function(e) {
+                    e.preventDefault();
+                    controller_state.accelerate = true;
+                    emit_updates();
+                },
+                touchend = function(e) {
+                    e.preventDefault();
+                    controller_state.accelerate = false;
+                    emit_updates();
+                },
+                devicemotion = function(e) {
+                    controller_state.steer = e.accelerationIncludingGravity.y / 100;
+                    emit_updates();
+                }
+            document.body.addEventListener('touchstart', touchstart, false); // iOS & Android
+            document.body.addEventListener('MSPointerDown', touchstart, false); // Windows Phone
+            document.body.addEventListener('touchend', touchend, false); // iOS & Android
+            document.body.addEventListener('MSPointerUp', touchend, false); // Windows Phone
+            window.addEventListener('devicemotion', devicemotion, false);
+        });
+        // When the server sends a changed controller state update it in the game
+        io.on('controller_state_change', function(state) {
+            controller_state = state;
+        });
+        io.on('game_connected', game_connected);
+    </script>
+    <script src="public/platform.js"></script>
+</body>
+
+</html>
