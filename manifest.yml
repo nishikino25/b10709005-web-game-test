@@ -1,4 +1,0 @@
-applications:
-- name: b10709005-web-game-test
-  random-route: true
-  memory: 128M
