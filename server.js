@@ -1,3 +1,19 @@
+// var http = require('http');
+// var fs = require('fs');
+
+// const PORT=8000; 
+
+// fs.readFile('./index.html', function (err, html) {
+
+//     if (err) throw err;    
+
+//     http.createServer(function(request, response) {  
+//         response.writeHeader(200, {"Content-Type": "text/html"});  
+//         response.write(html);  
+//         response.end();  
+//     }).listen(PORT);
+// });
+
 var express = require('express'),
     http = require('http'),
     app = express(),
@@ -14,7 +30,6 @@ app
 // Log that the servers running
 console.log("Server running on port: " + port);
 
-// Socket operations
 var io = require('socket.io').listen(server);
 var game_sockets = {};
 var controller_sockets = {};
@@ -80,8 +95,5 @@ io.sockets.on('connection', function(socket) {
         socket.emit("game_connected");
     });
 });
-
-// Loading public folder
-app.use("/public", express.static(__dirname + '/public'));
 // Loading all the resources
 app.use("/resources", express.static(__dirname + '/resources'));
