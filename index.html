@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no">
-    <title>Final</title>
+    <title>B10709005 Final Test</title>
     <link rel="stylesheet" href="static/index.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <!-- <script type="text/javascript" src="static/index.js"></script> -->
@@ -18,13 +18,13 @@
         var io = io.connect();
         var speed = 0,
             controller_state = {};
-        var game_connected = function () {
+        var game_connected = function() {
             var host;
             host = window.location.href;
             split_list = host.split(":");
             if (split_list[1] == "//localhost") {
                 io.emit('load_ip');
-                io.on('host_id', function (data) {
+                io.on('host_id', function(data) {
                     host = data;
                     var url = "http://" + host + ":8000?id=" + io.id;
                     var qr_code = new QRCode("qr");
@@ -43,10 +43,10 @@
         } else {
             io.emit('game_connect');
             var qr = document.createElement('div');
-            qr.style.padding="50px";
+            qr.style.padding = "50px";
             qr.id = "qr";
             document.body.appendChild(qr)
-            io.on('controller_connected', function (connected) {
+            io.on('controller_connected', function(connected) {
                 if (connected) {
                     qr.style.display = "none";
                 } else {
@@ -55,39 +55,39 @@
                 }
             });
         }
-        io.on('controller_connected', function (connected) {
+        io.on('controller_connected', function(connected) {
             if (connected) {
                 alert("Connected!");
             } else {
                 alert("Not connected!");
             }
             var controller_state = {
-                accelerate: false,
-                steer: 0
-            },
-                emit_updates = function () {
+                    accelerate: false,
+                    steer: 0
+                },
+                emit_updates = function() {
                     io.emit('controller_state_change', controller_state);
                 }
-            touchstart = function (e) {
-                e.preventDefault();
-                controller_state.accelerate = true;
-                emit_updates();
-            },
-                touchend = function (e) {
+            touchstart = function(e) {
+                    e.preventDefault();
+                    controller_state.accelerate = true;
+                    emit_updates();
+                },
+                touchend = function(e) {
                     e.preventDefault();
                     controller_state.accelerate = false;
                     emit_updates();
                 },
-                devicemotion = function (e) {
+                devicemotion = function(e) {
                     controller_state.steer = e.accelerationIncludingGravity.y / 100;
                     emit_updates();
                 }
-            document.body.addEventListener('touchstart', touchstart, false); 
-            document.body.addEventListener('touchend', touchend, false); 
+            document.body.addEventListener('touchstart', touchstart, false);
+            document.body.addEventListener('touchend', touchend, false);
             window.addEventListener('devicemotion', devicemotion, false);
         });
         // When the server sends a changed controller state update it in the game
-        io.on('controller_state_change', function (state) {
+        io.on('controller_state_change', function(state) {
             controller_state = state;
         });
         io.on('game_connected', game_connected);
@@ -116,8 +116,7 @@
     <script src="static/index.js"></script>
 </body>
 <script>
-
-    document.onkeydown = function (evt) {
+    document.onkeydown = function(evt) {
         evt = evt || window.event;
         if (evt.keyCode == 32) {
             var box = document.getElementById("messageBox");
