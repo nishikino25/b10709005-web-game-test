@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no">
-    <title>B10709005 Final Test 1230-sec</title>
+    <title>Final</title>
     <link rel="stylesheet" href="static/index.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <!-- <script type="text/javascript" src="static/index.js"></script> -->
@@ -114,15 +114,17 @@
         </div>
     </div>
     <script src="static/index.js"></script>
+    <script>
+        document.onkeydown = function(evt) {
+            evt = evt || window.event;
+            if (evt.keyCode == 32) {
+                var box = document.getElementById("messageBox");
+                box.style.visibility = "hidden";
+            }
+        };
+    </script>
+    <script src="static/platform.js"></script>
 </body>
-<script>
-    document.onkeydown = function(evt) {
-        evt = evt || window.event;
-        if (evt.keyCode == 32) {
-            var box = document.getElementById("messageBox");
-            box.style.visibility = "hidden";
-        }
-    };
-</script>
+
 
 </html>
